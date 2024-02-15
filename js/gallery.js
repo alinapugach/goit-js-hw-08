@@ -82,6 +82,7 @@ const item = images
     </a>
     </li>`
   )
+
   .join("");
 
 gallery.insertAdjacentHTML("afterbegin", item);
@@ -92,9 +93,25 @@ fullImg.addEventListener("click", function (event) {
   if (event.target.classList.contains("gallery-image")) {
     const originalSrc = event.target.getAttribute("data-source");
     console.log(originalSrc);
-    const instance = basicLightbox.create(`
-      <img src="${originalSrc}" width="800" height="600">
-  `);
+    const instance = basicLightbox.create(
+      `
+      <img src="${originalSrc}" width="800" height="600">`,
+      {
+        onShow: () => {
+          document.addEventListener("keydown", onModalClose);
+        },
+        onClose: () => {
+          document.removeEventListener("keydown", onModalClose);
+        },
+      }
+    );
+
+    function onModalClose(event) {
+      if (event.key === "Escape") {
+        instance.close();
+      }
+    }
+
     instance.show();
   }
 });
